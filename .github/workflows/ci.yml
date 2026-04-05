@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  ci:
+    name: Lint, Typecheck & Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.7.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint & Typecheck
+        run: pnpm check
+
+      - name: Build
+        run: pnpm build
+        env:
+          # Required by @t3-oss/env-nextjs at build time — use dummy values for CI
+          DATABASE_URL: postgresql://user:pass@localhost:5432/ozbargain
+          AUTH_SECRET: ci-secret-placeholder
+          NEXTAUTH_URL: http://localhost:3000
