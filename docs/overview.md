@@ -1,4 +1,4 @@
-# OzBargain — Project Overview
+# Promo Code — Project Overview
 
 ## Stack
 
