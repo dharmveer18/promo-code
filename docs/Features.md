@@ -1,24 +1,4 @@
-1. The Trust & Security Engine (Backend Logic)
-
-These features protect the platform’s integrity and prevent it from being overrun by marketers.
-Anti-Spam Strategy:
-Domain Blacklisting: A "deny-list" of low-quality or predatory affiliate sites that are blocked at the submission level.
-Reputation System (Karma-Gating): Restricting users from posting deals from "High-Value" domains (like Amazon or eBay) until they have earned enough community trust/upvotes.
-Live Update Counters: Tracking active viewers in real-time. This serves two purposes: identifying bot spikes (security) and creating FOMO (social proof).
-
-Weighted Voting: Not all votes are equal. The more "Karma" a user has, the more their vote matters.
-
-The "Front Page" Algorithm: A deal doesn't just go to the front page based on time; it needs a specific velocity of upvotes (usually +25 to +50) within a short window.
-
-The Penalty Box: Users who post low-quality deals or break rules are "timed out," losing the ability to post or comment for set periods.
-
-IP/Fingerprint Tracking : Advanced backend detection to stop "sock-puppet" accounts.
-
-Affiliate Link Injection : Automatically replacing user links with your own monetization tags.
-
-The Deal Specialist Funnel: staff editors (Deal Specialists). They vet deals for price history and merchant reliability before "promoting" them to the Frontpage
-
-2. The Smart Submission Flow (User Experience)
+1. The Smart Submission Flow (User Experience)
 
 These features reduce "friction," making it as easy as possible for a user to share a deal.
 Metadata Scraper (OpenGraph/Parsing):Automated Image Fetching: Grabbing the high-res product image via <meta property="og:image">.
@@ -38,7 +18,26 @@ Categorization of Offers: Distinguishing between standard deals and "Rebates" or
 
 Merchant Talk: A dedicated forum section where stores can discuss their upcoming sales or defend themselves against community criticism.
 
-fully native app with haptic feedback and swipe-to-vote gestures.
+Mobile: fully native app with haptic feedback and swipe-to-vote gestures.
+
+
+2. The Trust & Security Engine (Backend Logic)
+
+These features protect the platform’s integrity and prevent it from being overrun by marketers.
+Anti-Spam Strategy:
+Domain Blacklisting: A "deny-list" of low-quality or predatory affiliate sites that are blocked at the submission level.
+Reputation System (Karma-Gating): Restricting users from posting deals from "High-Value" domains (like Amazon or eBay) until they have earned enough community trust/upvotes.
+Live Update Counters: Tracking active viewers in real-time. This serves two purposes: identifying bot spikes (security) and creating FOMO (social proof).
+
+Weighted Voting: Not all votes are equal. The more "Karma" a user has, the more their vote matters.
+
+The "Front Page" Algorithm: A deal doesn't just go to the front page based on time; it needs a specific velocity of upvotes (usually +25 to +50) within a short window.
+
+The Penalty Box: Users who post low-quality deals or break rules are "timed out," losing the ability to post or comment for set periods.
+
+IP/Fingerprint Tracking : Advanced backend detection to stop "sock-puppet" accounts.
+
+The Deal Specialist Funnel/staff editors: They vet deals for price history and merchant reliability before "promoting" them to the Frontpage
 
 3. Community Engagement & Gamification
 

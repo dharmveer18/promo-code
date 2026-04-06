@@ -44,18 +44,4 @@ pnpm check          # Lint + typecheck
 pnpm build          # Production build
 ```
 
----
-
-## CI Pipeline
-
-File: `.github/workflows/ci.yml`  
-Triggers on every push and pull request to `main`.
-
-| Step | Command | Purpose |
-|---|---|---|
-| Install | `pnpm install --frozen-lockfile` | Installs deps; fails if lockfile is out of sync |
-| Lint & Typecheck | `pnpm check` | Runs ESLint + `tsc --noEmit` |
-| Build | `pnpm build` | Full Next.js production build |
-
-> Dummy env vars (`DATABASE_URL`, `AUTH_SECRET`) are used at build time to satisfy T3 env validation.  
-> Replace with real GitHub Actions secrets once a DB is provisioned.
+> See [pipeline.md](pipeline.md) for CI/CD details and [infra.md](infra.md) for deployment.
