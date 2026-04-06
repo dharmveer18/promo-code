@@ -1,4 +1,4 @@
-# OzBargain
+# Promo Code
 
 A T3 Stack app built with Next.js, tRPC, Drizzle ORM, NextAuth, and Tailwind CSS.
 
