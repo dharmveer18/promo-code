@@ -133,11 +133,20 @@ export function useDealForm() {
     }
   }
 
+  function handleClear() {
+    setForm(EMPTY_FORM);
+    setUrlStatus("idle");
+    setTitleFetch("idle");
+    setRssUrl("");
+    setRssFetch("idle");
+    localStorage.removeItem("deal-draft");
+  }
+
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     // TODO: replace with tRPC mutation
     console.log("Deal submission data:", form);
-    localStorage.removeItem("deal-draft");
+    handleClear();
     alert("Form data logged to console — API not wired yet");
   }
 
@@ -154,5 +163,6 @@ export function useDealForm() {
     handleAutoFill,
     handleRssImport,
     handleSubmit,
+    handleClear,
   };
 }

@@ -19,6 +19,7 @@ export function DealSubmitForm() {
     handleAutoFill,
     handleRssImport,
     handleSubmit,
+    handleClear,
   } = useDealForm();
 
   return (
@@ -194,12 +195,21 @@ export function DealSubmitForm() {
         />
       </Field>
 
-      <button
-        type="submit"
-        className="rounded-lg bg-orange-500 px-6 py-2.5 text-sm font-semibold text-white hover:bg-orange-600 transition-colors"
-      >
-        Submit Deal
-      </button>
+      <div className="flex gap-3">
+        <button
+          type="submit"
+          className="rounded-lg bg-orange-500 px-6 py-2.5 text-sm font-semibold text-white hover:bg-orange-600 transition-colors"
+        >
+          Submit Deal
+        </button>
+        <button
+          type="button"
+          onClick={handleClear}
+          className="rounded-lg border border-gray-300 px-6 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-colors"
+        >
+          Clear
+        </button>
+      </div>
     </form>
   );
 }
