@@ -10,10 +10,6 @@ export function DealSubmitForm() {
     form,
     urlStatus,
     titleFetch,
-    rssUrl,
-    setRssUrl,
-    rssFetch,
-    setRssFetch,
     handleChange,
     handleUrlBlur,
     handleAutoFill,
@@ -28,32 +24,6 @@ export function DealSubmitForm() {
       className="flex flex-col gap-5 rounded-xl border border-gray-200 bg-white p-6 shadow-sm"
     >
       <h2 className="text-lg font-bold text-gray-800">Submit a Deal</h2>
-
-      {/* RSS Import — shown only when NEXT_PUBLIC_ENABLE_RSS=true */}
-      {env.NEXT_PUBLIC_ENABLE_RSS && (
-        <div className="flex flex-col gap-2 rounded-lg border border-blue-200 bg-blue-50 p-4">
-          <p className="text-xs font-semibold text-blue-700">Import from RSS Feed</p>
-          <div className="flex gap-2">
-            <input
-              type="text"
-              value={rssUrl}
-              onChange={(e) => { setRssUrl(e.target.value); setRssFetch("idle"); }}
-              placeholder="https://example.com/feed.rss"
-              className={`${inputClass} flex-1`}
-            />
-            <button
-              type="button"
-              onClick={handleRssImport}
-              disabled={rssFetch === "fetching" || !rssUrl.trim()}
-              className="rounded-lg bg-blue-600 px-4 py-2 text-xs font-semibold text-white hover:bg-blue-700 disabled:opacity-50 transition-colors"
-            >
-              {rssFetch === "fetching" ? "Importing…" : "Import"}
-            </button>
-          </div>
-          {rssFetch === "done" && <p className="text-xs text-green-700">Fields filled from RSS feed ✓</p>}
-          {rssFetch === "error" && <p className="text-xs text-red-600">Could not read RSS feed — check the URL</p>}
-        </div>
-      )}
 
       {/* Title */}
       <Field label="Deal Title *" hint="Be specific — include brand, model, and key specs">
