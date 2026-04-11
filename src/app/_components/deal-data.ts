@@ -63,3 +63,78 @@ export const SAMPLE_DEALS: Deal[] = [
     url: "#",
   },
 ];
+
+// ---------------------------------------------------------------------------
+// Deal submission form types & constants
+// ---------------------------------------------------------------------------
+
+export interface DealFormData {
+  title: string;
+  url: string;
+  isFreebie: boolean;
+  price: string;
+  originalPrice: string;
+  store: string;
+  category: string;
+  promoCode: string;
+  affiliation: string;
+  startsAt: string;
+  expiresAt: string;
+  description: string;
+  tags?: string[];
+  timestamp: Date;
+}
+
+export type UrlCheckStatus =
+  | "idle"
+  | "checking"
+  | "ok"
+  | "invalid_syntax"
+  | "invalid_protocol"
+  | "not_found"
+  | "domain_not_found"
+  | "blocked_by_site"
+  | "timeout"
+  | "site_error"
+  | "blocked_host";
+
+export const URL_ERROR_MESSAGES: Record<string, string> = {
+  invalid_syntax: "Not a valid URL — check for typos",
+  invalid_protocol: "Only http:// and https:// URLs are allowed",
+  not_found: "Page not found — the deal may have expired (404)",
+  domain_not_found: "Domain doesn't exist — check the URL",
+  blocked_by_site: "Site blocked access — you can still fill in details manually",
+  timeout: "Site took too long to respond",
+  site_error: "Site returned an error — you can still submit manually",
+  blocked_host: "URL not allowed",
+};
+
+export const EMPTY_FORM: DealFormData = {
+  title: "",
+  url: "",
+  isFreebie: false,
+  price: "",
+  originalPrice: "",
+  store: "",
+  category: "",
+  promoCode: "",
+  affiliation: "",
+  startsAt: "",
+  expiresAt: "",
+  description: "",
+  tags: [],
+  timestamp: new Date(),
+};
+
+export const CATEGORIES = [
+  "Electronics",
+  "Clothing & Shoes",
+  "Home & Garden",
+  "Toys & Games",
+  "Food & Grocery",
+  "Travel",
+  "Beauty & Health",
+  "Sports & Outdoors",
+  "Automotive",
+  "Other",
+];

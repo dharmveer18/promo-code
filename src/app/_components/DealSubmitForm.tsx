@@ -1,77 +1,25 @@
 "use client";
 
-import { useState } from "react";
+import { env } from "~/env.js";
 
-interface DealFormData {
-  title: string;
-  url: string;
-  isFreebie: boolean;
-  price: string;
-  originalPrice: string;
-  store: string;
-  category: string;
-  promoCode: string;
-  affiliation: string;
-  startsAt: string;
-  expiresAt: string;
-  description: string;
-  tags?: string[];
-  timestamp: Date;
-}
-
-const EMPTY_FORM: DealFormData = {
-  title: "",
-  url: "",
-  isFreebie: false,
-  price: "",
-  originalPrice: "",
-  store: "",
-  category: "",
-  promoCode: "",
-  affiliation: "",
-  startsAt: "",
-  expiresAt: "",
-  description: "",
-  timestamp: new Date(),
-};
-
-const CATEGORIES = [
-  "Electronics",
-  "Clothing & Shoes",
-  "Home & Garden",
-  "Toys & Games",
-  "Food & Grocery",
-  "Travel",
-  "Beauty & Health",
-  "Sports & Outdoors",
-  "Automotive",
-  "Other",
-];
+import { CATEGORIES, URL_ERROR_MESSAGES } from "./deal-data";
+import { useDealForm } from "./useDealForm";
 
 export function DealSubmitForm() {
-  const [form, setForm] = useState<DealFormData>(EMPTY_FORM);
-
-  function handleChange(
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >,
-  ) {
-    const { name, value, type } = e.target;
-    const checked = (e.target as HTMLInputElement).checked;
-    setForm((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-      // clear price when freebie is checked
-      ...(name === "isFreebie" && checked ? { price: "", originalPrice: "" } : {}),
-    }));
-  }
-
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    // TODO: replace with tRPC mutation
-    console.log("Deal submission data:", form);
-    alert("Form data logged to console — API not wired yet");
-  }
+  const {
+    form,
+    urlStatus,
+    titleFetch,
+    rssUrl,
+    setRssUrl,
+    rssFetch,
+    setRssFetch,
+    handleChange,
+    handleUrlBlur,
+    handleAutoFill,
+    handleRssImport,
+    handleSubmit,
+  } = useDealForm();
 
   return (
     <form
@@ -79,6 +27,32 @@ export function DealSubmitForm() {
       className="flex flex-col gap-5 rounded-xl border border-gray-200 bg-white p-6 shadow-sm"
     >
       <h2 className="text-lg font-bold text-gray-800">Submit a Deal</h2>
+
+      {/* RSS Import — shown only when NEXT_PUBLIC_ENABLE_RSS=true */}
+      {env.NEXT_PUBLIC_ENABLE_RSS && (
+        <div className="flex flex-col gap-2 rounded-lg border border-blue-200 bg-blue-50 p-4">
+          <p className="text-xs font-semibold text-blue-700">Import from RSS Feed</p>
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={rssUrl}
+              onChange={(e) => { setRssUrl(e.target.value); setRssFetch("idle"); }}
+              placeholder="https://example.com/feed.rss"
+              className={`${inputClass} flex-1`}
+            />
+            <button
+              type="button"
+              onClick={handleRssImport}
+              disabled={rssFetch === "fetching" || !rssUrl.trim()}
+              className="rounded-lg bg-blue-600 px-4 py-2 text-xs font-semibold text-white hover:bg-blue-700 disabled:opacity-50 transition-colors"
+            >
+              {rssFetch === "fetching" ? "Importing…" : "Import"}
+            </button>
+          </div>
+          {rssFetch === "done" && <p className="text-xs text-green-700">Fields filled from RSS feed ✓</p>}
+          {rssFetch === "error" && <p className="text-xs text-red-600">Could not read RSS feed — check the URL</p>}
+        </div>
+      )}
 
       {/* Title */}
       <Field label="Deal Title *" hint="Be specific — include brand, model, and key specs">
@@ -93,16 +67,47 @@ export function DealSubmitForm() {
       </Field>
 
       {/* URL */}
-      <Field label="Deal URL *" hint="Direct link to the product page or cart">
-        <input
-          name="url"
-          type="url"
-          value={form.url}
-          onChange={handleChange}
-          required
-          placeholder="https://www.jbhifi.com.au/products/..."
-          className={inputClass}
-        />
+      <Field label="Deal URL *" hint="Paste the product URL — we'll verify it exists">
+        <div className="relative">
+          <input
+            name="url"
+            type="text"
+            value={form.url}
+            onChange={handleChange}
+            onBlur={handleUrlBlur}
+            required
+            placeholder="https://www.jbhifi.com.au/products/..."
+            className={`${inputClass} ${
+              urlStatus === "ok" ? "border-green-400" :
+              urlStatus !== "idle" && urlStatus !== "checking" ? "border-red-400" : ""
+            }`}
+          />
+          {urlStatus === "checking" && (
+            <span className="absolute right-3 top-2 text-xs text-gray-400 animate-pulse">Checking...</span>
+          )}
+          {urlStatus === "ok" && (
+            <span className="absolute right-3 top-2 text-xs text-green-600">✓ URL found</span>
+          )}
+        </div>
+        {urlStatus !== "idle" && urlStatus !== "checking" && urlStatus !== "ok" && (
+          <p className="mt-1 text-xs text-red-500">
+            {URL_ERROR_MESSAGES[urlStatus] ?? "Could not verify URL — you can still submit manually"}
+          </p>
+        )}
+        {urlStatus === "ok" && (
+          <div className="mt-1 flex items-center gap-2">
+            <button
+              type="button"
+              onClick={handleAutoFill}
+              disabled={titleFetch === "fetching"}
+              className="text-xs text-orange-500 hover:text-orange-700 underline disabled:opacity-50"
+            >
+              {titleFetch === "fetching" ? "Fetching title…" : "Auto-fill title from page"}
+            </button>
+            {titleFetch === "error" && <span className="text-xs text-gray-400">Could not read page title</span>}
+            {titleFetch === "done" && <span className="text-xs text-green-600">Title filled ✓</span>}
+          </div>
+        )}
       </Field>
 
       {/* Freebie toggle */}
@@ -116,9 +121,7 @@ export function DealSubmitForm() {
         />
         <div>
           <span className="text-sm font-semibold text-green-800">Freebie</span>
-          <p className="text-xs text-green-600">
-            Item or service is completely FREE — zero shipping, no strings attached.
-          </p>
+          <p className="text-xs text-green-600">Item or service is completely FREE — zero shipping, no strings attached.</p>
         </div>
       </label>
 
@@ -126,53 +129,24 @@ export function DealSubmitForm() {
       {!form.isFreebie && (
         <div className="grid grid-cols-2 gap-4">
           <Field label="Deal Price" hint="Current discounted price (optional)">
-            <input
-              name="price"
-              value={form.price}
-              onChange={handleChange}
-              placeholder="$299"
-              className={inputClass}
-            />
+            <input name="price" value={form.price} onChange={handleChange} placeholder="$299" className={inputClass} />
           </Field>
           <Field label="Original Price" hint="RRP or previous price">
-            <input
-              name="originalPrice"
-              value={form.originalPrice}
-              onChange={handleChange}
-              placeholder="$549"
-              className={inputClass}
-            />
+            <input name="originalPrice" value={form.originalPrice} onChange={handleChange} placeholder="$549" className={inputClass} />
           </Field>
         </div>
       )}
 
       {/* Store */}
       <Field label="Store *" hint="Retailer name">
-        <input
-          name="store"
-          value={form.store}
-          onChange={handleChange}
-          required
-          placeholder="JB Hi-Fi"
-          className={inputClass}
-        />
+        <input name="store" value={form.store} onChange={handleChange} required placeholder="JB Hi-Fi" className={inputClass} />
       </Field>
 
       {/* Category */}
       <Field label="Category *">
-        <select
-          name="category"
-          value={form.category}
-          onChange={handleChange}
-          required
-          className={inputClass}
-        >
+        <select name="category" value={form.category} onChange={handleChange} required className={inputClass}>
           <option value="">Select a category...</option>
-          {CATEGORIES.map((cat) => (
-            <option key={cat} value={cat}>
-              {cat}
-            </option>
-          ))}
+          {CATEGORIES.map((cat) => <option key={cat} value={cat}>{cat}</option>)}
         </select>
       </Field>
 
@@ -188,10 +162,7 @@ export function DealSubmitForm() {
       </Field>
 
       {/* Affiliation */}
-      <Field
-        label="I am Associated with"
-        hint="Declare if you are a store rep, employee, or affiliate. Leave blank if not associated."
-      >
+      <Field label="I am Associated with" hint="Declare if you are a store rep, employee, or affiliate. Leave blank if not associated.">
         <input
           name="affiliation"
           value={form.affiliation}
@@ -204,22 +175,10 @@ export function DealSubmitForm() {
       {/* Start / Expiry dates */}
       <div className="grid grid-cols-2 gap-4">
         <Field label="Start Date" hint="When does the deal go live?">
-          <input
-            name="startsAt"
-            type="date"
-            value={form.startsAt}
-            onChange={handleChange}
-            className={inputClass}
-          />
+          <input name="startsAt" type="date" value={form.startsAt} onChange={handleChange} className={inputClass} />
         </Field>
         <Field label="Expiry Date" hint="When does the deal end?">
-          <input
-            name="expiresAt"
-            type="date"
-            value={form.expiresAt}
-            onChange={handleChange}
-            className={inputClass}
-          />
+          <input name="expiresAt" type="date" value={form.expiresAt} onChange={handleChange} className={inputClass} />
         </Field>
       </div>
 
@@ -269,3 +228,9 @@ function Field({
     </div>
   );
 }
+
+
+
+
+
+
