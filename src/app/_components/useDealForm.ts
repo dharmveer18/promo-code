@@ -9,7 +9,7 @@ import {
   type UrlCheckStatus,
 } from "./deal-data";
 
-export function useDealForm() {
+export function useDealForm(onSubmitSuccess?: () => void) {
   const [form, setForm] = useState<DealFormData>(() => {
     if (typeof window === "undefined") return EMPTY_FORM;
     try {
@@ -147,6 +147,7 @@ export function useDealForm() {
     // TODO: replace with tRPC mutation
     console.log("Deal submission data:", form);
     handleClear();
+    onSubmitSuccess?.();
     alert("Form data logged to console — API not wired yet");
   }
 

@@ -5,7 +5,7 @@ import { env } from "~/env.js";
 import { CATEGORIES, URL_ERROR_MESSAGES } from "./deal-data";
 import { useDealForm } from "./useDealForm";
 
-export function DealSubmitForm() {
+export function DealSubmitForm({ onSubmitSuccess }: { onSubmitSuccess?: () => void } = {}) {
   const {
     form,
     urlStatus,
@@ -16,7 +16,7 @@ export function DealSubmitForm() {
     handleRssImport,
     handleSubmit,
     handleClear,
-  } = useDealForm();
+  } = useDealForm(onSubmitSuccess);
 
   return (
     <form
