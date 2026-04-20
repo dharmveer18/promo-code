@@ -10,6 +10,8 @@ export function DealSubmitForm({ onSubmitSuccess }: { onSubmitSuccess?: () => vo
     form,
     urlStatus,
     titleFetch,
+    isSubmitting,
+    submitError,
     handleChange,
     handleUrlBlur,
     handleAutoFill,
@@ -165,20 +167,27 @@ export function DealSubmitForm({ onSubmitSuccess }: { onSubmitSuccess?: () => vo
         />
       </Field>
 
-      <div className="flex gap-3">
-        <button
-          type="submit"
-          className="rounded-lg bg-orange-500 px-6 py-2.5 text-sm font-semibold text-white hover:bg-orange-600 transition-colors"
-        >
-          Submit Deal
-        </button>
-        <button
-          type="button"
-          onClick={handleClear}
-          className="rounded-lg border border-gray-300 px-6 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-colors"
-        >
-          Clear
-        </button>
+      <div className="flex flex-col gap-2">
+        {submitError && (
+          <p className="text-xs text-red-500">Failed to submit: {submitError}</p>
+        )}
+        <div className="flex gap-3">
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="rounded-lg bg-orange-500 px-6 py-2.5 text-sm font-semibold text-white hover:bg-orange-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isSubmitting ? "Submitting…" : "Submit Deal"}
+          </button>
+          <button
+            type="button"
+            onClick={handleClear}
+            disabled={isSubmitting}
+            className="rounded-lg border border-gray-300 px-6 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-colors disabled:opacity-50"
+          >
+            Clear
+          </button>
+        </div>
       </div>
     </form>
   );

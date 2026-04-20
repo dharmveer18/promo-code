@@ -83,3 +83,20 @@ A chronological log of decisions, thinking, and what was built each session.
 **Built:**
 - `docs/Features.md` — 5 feature categories with detailed breakdown
 - `docs/marketCompariosn.md` — comparison table (OzBargain vs modern peers vs sweet spot)
+
+---
+
+## [2026-04-20] Session 5 — Wire Deals to Real Database
+
+**Built:**
+- `deals` table in Drizzle schema + `pnpm db:push`
+- `dealRouter` — `getAll` and `create` (both public, no login required)
+- `docker-compose.yml` — local Postgres 16 on port 5432
+- Home page now loads deals from DB
+
+**Debugged:**
+- `ECONNRESET` — Windows `localhost` resolves to IPv6; fixed with `127.0.0.1` in `DATABASE_URL`
+- `relation does not exist` — ran `pnpm db:push` to create tables
+- `UNAUTHORIZED` on create — changed `protectedProcedure` → `publicProcedure`
+
+

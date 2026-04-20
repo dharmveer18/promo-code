@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 
+import { api } from "~/trpc/react";
+
 import {
   CATEGORIES,
   EMPTY_FORM,
@@ -10,6 +12,12 @@ import {
 } from "./deal-data";
 
 export function useDealForm(onSubmitSuccess?: () => void) {
+  const createDeal = api.deal.create.useMutation({
+    onSuccess: () => {
+      handleClear();
+      onSubmitSuccess?.();
+    },
+  });
   const [form, setForm] = useState<DealFormData>(() => {
     if (typeof window === "undefined") return EMPTY_FORM;
     try {
@@ -144,11 +152,20 @@ export function useDealForm(onSubmitSuccess?: () => void) {
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    // TODO: replace with tRPC mutation
-    console.log("Deal submission data:", form);
-    handleClear();
-    onSubmitSuccess?.();
-    alert("Form data logged to console — API not wired yet");
+    createDeal.mutate({
+      title: form.title,
+      url: form.url,
+      price: form.price || undefined,
+      originalPrice: form.originalPrice || undefined,
+      store: form.store,
+      category: form.category,
+      description: form.description || undefined,
+      promoCode: form.promoCode || undefined,
+      isFreebie: form.isFreebie,
+      affiliation: form.affiliation || undefined,
+      startsAt: form.startsAt || undefined,
+      expiresAt: form.expiresAt || undefined,
+    });
   }
 
   return {
@@ -159,6 +176,8 @@ export function useDealForm(onSubmitSuccess?: () => void) {
     setRssUrl,
     rssFetch,
     setRssFetch,
+    isSubmitting: createDeal.isPending,
+    submitError: createDeal.error?.message ?? null,
     handleChange,
     handleUrlBlur,
     handleAutoFill,

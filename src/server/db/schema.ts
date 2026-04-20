@@ -106,3 +106,41 @@ export const verificationTokens = createTable(
   }),
   (t) => [primaryKey({ columns: [t.identifier, t.token] })],
 );
+
+export const deals = createTable(
+  "deal",
+  (d) => ({
+    id: d.integer().primaryKey().generatedByDefaultAsIdentity(),
+    title: d.varchar({ length: 512 }).notNull(),
+    url: d.varchar({ length: 2048 }).notNull(),
+    price: d.varchar({ length: 64 }),
+    originalPrice: d.varchar({ length: 64 }),
+    store: d.varchar({ length: 256 }).notNull(),
+    category: d.varchar({ length: 128 }).notNull(),
+    description: d.text(),
+    promoCode: d.varchar({ length: 128 }),
+    isFreebie: d.boolean().default(false).notNull(),
+    affiliation: d.varchar({ length: 256 }),
+    startsAt: d.timestamp({ withTimezone: true }),
+    expiresAt: d.timestamp({ withTimezone: true }),
+    upvotes: d.integer().default(0).notNull(),
+    commentsCount: d.integer().default(0).notNull(),
+    submittedById: d.varchar({ length: 255 }).references(() => users.id),
+    createdAt: d
+      .timestamp({ withTimezone: true })
+      .$defaultFn(() => new Date())
+      .notNull(),
+  }),
+  (t) => [
+    index("deal_category_idx").on(t.category),
+    index("deal_created_at_idx").on(t.createdAt),
+    index("deal_submitted_by_idx").on(t.submittedById),
+  ],
+);
+
+export const dealsRelations = relations(deals, ({ one }) => ({
+  submittedBy: one(users, {
+    fields: [deals.submittedById],
+    references: [users.id],
+  }),
+}));
